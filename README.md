@@ -9,7 +9,7 @@ Hence I decided to build a lightweight implementation of a youtube downloader. I
 
 ## Prerequisites
 
-- Node.js >= 14.0.0
+- Node.js >= v14.0.0
 
 ## Usage
 
@@ -17,7 +17,7 @@ Hence I decided to build a lightweight implementation of a youtube downloader. I
 
 ```bash
 $ git clone https://github.com/Olgoetz/nodejs-youtube-cli.git
-$ cd nodejsyoutube-cli
+$ cd nodejs-youtube-cli
 ```
 
 2. Run the following command:
