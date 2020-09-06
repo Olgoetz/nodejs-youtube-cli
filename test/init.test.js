@@ -1,39 +1,50 @@
 process.env.NODE_ENV = 'test';
-const expect = require('chai').expect;
+
+// NPM modules
+const chai = require('chai');
+const sinonChai = require('sinon-chai');
+const sinon = require('sinon');
+const mock = require('mock-fs');
+const Configstore = require('configstore');
+
+// Custom modules
+const { cliConfigFile } = require('../lib/constants');
 const init = require('../lib/init');
 
-const mock = require('mock-fs');
+// Enable sinon with chai
+const expect = chai.expect;
 
+// Setup the tests
+chai.use(sinonChai);
 beforeEach(() => {
 	mock({
-		files: {
-			'default.json': '{"audioDir":"myPath"}',
+		'~/.config/configstore': {
+			'youtube-cli.json': '{"audioDir":"myPath"}',
 		},
 	});
 });
 
 describe('validateConfig()', () => {
 	it('should return true', () => {
-		expect(init.validateConfig('files/default.json')).to.be.true;
+		expect(init.validateConfig(`~/.config/configstore/${cliConfigFile}.json`))
+			.to.be.true;
 	});
-	it('should return false', () => {
-		expect(init.validateConfig('files/no.json')).to.be.false;
-	});
-});
+	it('should call "process.exit()"', () => {
+		const pe = sinon.stub(process, 'exit');
+		const vc = sinon.fake(init.validateConfig);
+		vc('files/nojson.json');
 
-describe('createFolder()', () => {
-	it('should return false', () => {
-		expect(init.createFolder('files')).to.be.false;
-	});
-	it('should return true', () => {
-		expect(init.createFolder('/fakePath')).to.equal(true);
+		expect(pe).to.have.been.called;
 	});
 });
 
 describe('createConfig()', () => {
 	it('should return true', () => {
-		expect(init.createConfig('/files', './files/default.json')).to.equal(true);
+		const config = new Configstore(cliConfigFile);
+		init.createConfig('myAudioDir');
+		expect(config.get('audioDir')).to.equal('myAudioDir');
 	});
 });
 
+// Get rid off the mock filesystem
 mock.restore();

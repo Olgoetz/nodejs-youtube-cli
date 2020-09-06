@@ -1,27 +1,30 @@
-const yargs = require('yargs');
+#!/usr/bin/env node
 
-// Handle debug mode
-yargs.boolean(['v']);
-if (yargs.argv.v) {
+// NPM modulues
+const figlet = require('figlet');
+const yargs = require('yargs');
+const chalk = require('chalk');
+
+// Intro
+console.clear();
+console.log(
+	chalk.blue(figlet.textSync('YouTube-Cli', { horizontalLayout: 'full' }))
+);
+
+// Check '-v' or '--verbose' has been passend in the cli input
+const _arguments = process.argv;
+if (_arguments.includes('-v') || _arguments.includes('--verbose')) {
 	process.env.YOUTUBECLI_DEBUG = 'debug';
 }
-const logger = require('./lib/logger');
 
 // Custom modules
 const init = require('./lib/init');
 const youtube = require('./lib/youtube');
-
-//****************************************************************************************************
-// INIT CHECK
-//****************************************************************************************************
-init.validateConfig(init.CONFIG);
-
-//****************************************************************************************************
-// CONFIGURING YARGS
-//****************************************************************************************************
+const Configstore = require('configstore');
+const { cliConfigFile } = require('./lib/constants');
+const config = new Configstore(cliConfigFile);
 
 // Basics
-
 yargs.version('1.0.0');
 yargs.scriptName('youtube-cli');
 yargs.usage('Usage: $0 <cmd> [options]');
@@ -39,7 +42,6 @@ yargs.command({
 	},
 	handler: (argv) => {
 		const url = argv.url.replace(/\\/g, '');
-		logger.debug(`URL: ${url}`);
 		youtube.main(url);
 	},
 });
@@ -56,12 +58,22 @@ yargs.command({
 		},
 	},
 	handler: (argv) => {
-		init.createConfig(argv.audio, init.CONFIG);
+		init.createConfig(argv.audio);
 	},
 });
 
+// Enable verbose mode
+yargs.option('verbose', {
+	alias: 'v',
+	type: 'boolean',
+	description: 'Run with verbose logging',
+}).argv;
+
 // Require one command
-yargs.demandCommand(1, '');
+yargs.demandCommand(1);
 
 // Parse all commands
 yargs.parse();
+
+// Validate config
+init.validateConfig(config.path);
