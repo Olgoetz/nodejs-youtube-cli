@@ -19,14 +19,17 @@
 	"author": "Oliver Goetz",
 	"license": "MIT",
 	"dependencies": {
+		"audio-decode": "^1.4.0",
 		"chalk": "^4.1.0",
 		"configstore": "^5.0.1",
 		"figlet": "^1.5.0",
 		"fluent-ffmpeg": "^2.1.2",
 		"ora": "^5.0.0",
+		"web-audio-api": "^0.2.2",
+		"web-audio-beat-detector": "^8.0.24",
 		"winston": "^3.3.3",
-		"yargs": "^15.4.1",
-		"ytdl-core": "^3.2.2"
+		"yargs": "^16.2.0",
+		"ytdl-core": "^4.4.5"
 	},
 	"devDependencies": {
 		"chai": "^4.2.0",
